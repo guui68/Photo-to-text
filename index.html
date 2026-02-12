@@ -3,140 +3,98 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GX Technology - Premium</title>
+    <title>GX Technology | Premium Portal</title>
     <style>
-        /* বেসিক সেটআপ */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { height: 100vh; display: flex; justify-content: center; align-items: center; background: radial-gradient(circle at center, #111, #000); color: #fff; }
 
-        body {
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            /* একটি গাঢ় এবং মার্জিত ব্যাকগ্রাউন্ড */
-            background: radial-gradient(circle at center, #1a1a2e 0%, #0f0f1a 100%);
-            color: #ffffff;
-        }
-
-        /* মেইন কন্টেইনার বক্স */
-        .container {
-            background: rgba(255, 255, 255, 0.03);
+        .card {
+            background: rgba(255, 255, 255, 0.02);
             border: 1px solid rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(20px);
-            padding: 60px 40px;
-            border-radius: 40px;
-            width: 400px;
+            padding: 50px 30px;
+            width: 360px;
+            border-radius: 30px;
             text-align: center;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.8);
         }
 
-        /* GX Technology টাইটেল */
-        .brand-name {
-            font-size: 28px;
-            font-weight: 700;
-            letter-spacing: 2px;
-            margin-bottom: 10px;
-            background: linear-gradient(to right, #ffffff, #888);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-transform: uppercase;
-        }
+        .brand-name { font-size: 26px; font-weight: 800; letter-spacing: 3px; margin-bottom: 5px; color: #fff; text-transform: uppercase; }
+        .sub-text { font-size: 10px; color: #666; letter-spacing: 4px; text-transform: uppercase; margin-bottom: 40px; display: block; }
 
-        .sub-title {
-            font-size: 12px;
-            color: #777;
-            text-transform: uppercase;
-            letter-spacing: 4px;
-            margin-bottom: 40px;
-        }
-
-        /* ড্রপডাউন ডিজাইন */
-        .select-box {
+        select {
             width: 100%;
             padding: 15px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: #111;
+            border: 1px solid #333;
             border-radius: 12px;
             color: #fff;
-            font-size: 16px;
+            font-size: 15px;
             outline: none;
             cursor: pointer;
             margin-bottom: 25px;
             transition: 0.3s;
         }
 
-        .select-box:focus {
-            border-color: #fff;
-            background: rgba(255, 255, 255, 0.1);
-        }
+        select:focus { border-color: #fff; }
 
-        .select-box option {
-            background: #1a1a2e;
-            color: #fff;
-        }
-
-        /* ওপেন বাটন - একদম ক্লীন ডিজাইন */
-        .open-btn {
+        .btn-open {
             width: 100%;
             padding: 15px;
-            border-radius: 12px;
             border: 1px solid #fff;
+            border-radius: 12px;
             background: transparent;
             color: #fff;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.4s ease;
+            font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 2px;
+            cursor: pointer;
+            transition: 0.4s;
         }
 
-        .open-btn:hover {
-            background: #fff;
-            color: #000;
-        }
-
-        /* ফুটারে ছোট ডেকোরেশন */
-        .footer-line {
-            margin-top: 30px;
-            height: 1px;
-            background: linear-gradient(to right, transparent, rgba(255,255,255,0.2), transparent);
-        }
+        .btn-open:hover { background: #fff; color: #000; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <div class="brand-name">GX Technology</div>
-    <div class="sub-title">Premium Access</div>
-    
-    <select id="linkMenu" class="select-box">
-        <option value="" disabled selected>লিংক টাইটেল বেছে নিন</option>
-        <option value="https://guui68.github.io/GX-translate/">ট্রান্সলেট লিংক</option>
-        <option value="https://guui68.github.io/Rent/">রশিদ লিংক</option>
+<div class="card">
+    <span class="brand-name">GX TECHNOLOGY</span>
+    <span class="sub-text">Premium Access</span>
+
+    <select id="linkMenu">
+        <option value="" disabled selected>লোড হচ্ছে...</option>
     </select>
 
-    <button class="open-btn" onclick="visitLink()">Open Link</button>
-    
-    <div class="footer-line"></div>
+    <button class="btn-open" onclick="visitLink()">Open Link</button>
 </div>
 
 <script>
-    function visitLink() {
-        const url = document.getElementById("linkMenu").value;
-        if (url) {
-            // নতুন উইন্ডোতে লিংকটি ওপেন হবে
-            window.open(url, "_blank");
-        } else {
-            alert("অনুগ্রহ করে একটি টাইটেল নির্বাচন করুন।");
+    const jsonUrl = 'https://raw.githubusercontent.com/guui68/GX-translate/main/links.json';
+
+    async function fetchLinks() {
+        try {
+            const response = await fetch(jsonUrl + '?t=' + Date.now());
+            const data = await response.json();
+            const menu = document.getElementById('linkMenu');
+            menu.innerHTML = '<option value="" disabled selected>একটি টাইটেল বেছে নিন</option>';
+            
+            data.forEach(item => {
+                let option = document.createElement('option');
+                option.value = item.url;
+                option.textContent = item.title;
+                menu.appendChild(option);
+            });
+        } catch (error) {
+            document.getElementById('linkMenu').innerHTML = '<option>Error loading links</option>';
         }
     }
-</script>
 
+    function visitLink() {
+        const url = document.getElementById('linkMenu').value;
+        if (url) window.open(url, '_blank');
+        else alert("দয়া করে একটি টাইটেল সিলেক্ট করুন।");
+    }
+
+    fetchLinks();
+</script>
 </body>
 </html>
