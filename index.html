@@ -3,125 +3,137 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Premium Link Hub</title>
+    <title>GX Technology - Premium</title>
     <style>
-        /* এনিমেটেড ব্যাকগ্রাউন্ড */
-        body {
+        /* বেসিক সেটআপ */
+        * {
             margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
             height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
-            background-size: 400% 400%;
-            animation: gradient 15s ease infinite;
-            overflow: hidden;
+            /* একটি গাঢ় এবং মার্জিত ব্যাকগ্রাউন্ড */
+            background: radial-gradient(circle at center, #1a1a2e 0%, #0f0f1a 100%);
+            color: #ffffff;
         }
 
-        @keyframes gradient {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        /* মেইন প্রিমিয়াম কার্ড */
-        .card {
-            background: rgba(255, 255, 255, 0.1);
+        /* মেইন কন্টেইনার বক্স */
+        .container {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(20px);
-            border-radius: 30px;
-            padding: 50px;
-            width: 380px;
+            padding: 60px 40px;
+            border-radius: 40px;
+            width: 400px;
             text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            box-shadow: 0 25px 45px rgba(0,0,0,0.2);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
         }
 
-        h2 {
-            color: #fff;
-            font-size: 24px;
-            margin-bottom: 30px;
-            letter-spacing: 1px;
+        /* GX Technology টাইটেল */
+        .brand-name {
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+            background: linear-gradient(to right, #ffffff, #888);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
         }
 
-        /* কাস্টম ড্রপডাউন স্টাইল */
-        .select-wrapper {
-            position: relative;
-            margin-bottom: 30px;
+        .sub-title {
+            font-size: 12px;
+            color: #777;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            margin-bottom: 40px;
         }
 
-        select {
+        /* ড্রপডাউন ডিজাইন */
+        .select-box {
             width: 100%;
             padding: 15px;
-            border-radius: 15px;
-            border: none;
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
             color: #fff;
             font-size: 16px;
             outline: none;
             cursor: pointer;
-            appearance: none; /* ডিফল্ট অ্যারো সরানোর জন্য */
+            margin-bottom: 25px;
             transition: 0.3s;
         }
 
-        select option {
-            background: #333;
+        .select-box:focus {
+            border-color: #fff;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .select-box option {
+            background: #1a1a2e;
             color: #fff;
         }
 
-        /* ওপেন বাটন - প্রিমিয়াম লুক */
-        .btn-open {
+        /* ওপেন বাটন - একদম ক্লীন ডিজাইন */
+        .open-btn {
             width: 100%;
             padding: 15px;
-            border-radius: 15px;
-            border: none;
-            background: #fff;
-            color: #333;
-            font-size: 18px;
-            font-weight: bold;
-            text-transform: uppercase;
+            border-radius: 12px;
+            border: 1px solid #fff;
+            background: transparent;
+            color: #fff;
+            font-size: 16px;
+            font-weight: 600;
             cursor: pointer;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
             transition: all 0.4s ease;
+            text-transform: uppercase;
+            letter-spacing: 2px;
         }
 
-        .btn-open:hover {
-            background: #23a6d5;
-            color: white;
-            transform: scale(1.05);
-            box-shadow: 0 15px 25px rgba(35, 166, 213, 0.4);
+        .open-btn:hover {
+            background: #fff;
+            color: #000;
         }
 
-        .btn-open:active {
-            transform: scale(0.98);
+        /* ফুটারে ছোট ডেকোরেশন */
+        .footer-line {
+            margin-top: 30px;
+            height: 1px;
+            background: linear-gradient(to right, transparent, rgba(255,255,255,0.2), transparent);
         }
-
     </style>
 </head>
 <body>
 
-<div class="card">
-    <h2>Select Link</h2>
+<div class="container">
+    <div class="brand-name">GX Technology</div>
+    <div class="sub-title">Premium Access</div>
     
-    <div class="select-wrapper">
-        <select id="linkID">
-            <option value="" disabled selected>টাইটেল বেছে নিন</option>
-            <option value="https://guui68.github.io/GX-translate/">ট্রান্সলেট লিংক</option>
-            <option value="https://guui68.github.io/Rent/">রশিদ লিংক</option>
-        </select>
-    </div>
+    <select id="linkMenu" class="select-box">
+        <option value="" disabled selected>লিংক টাইটেল বেছে নিন</option>
+        <option value="https://guui68.github.io/GX-translate/">ট্রান্সলেট লিংক</option>
+        <option value="https://guui68.github.io/Rent/">রশিদ লিংক</option>
+    </select>
 
-    <button class="btn-open" onclick="openLink()">Open Now</button>
+    <button class="open-btn" onclick="visitLink()">Open Link</button>
+    
+    <div class="footer-line"></div>
 </div>
 
 <script>
-    function openLink() {
-        const url = document.getElementById("linkID").value;
+    function visitLink() {
+        const url = document.getElementById("linkMenu").value;
         if (url) {
-            // প্রিমিয়াম ট্রানজিশন ইফেক্ট দিয়ে লিংক ওপেন
-            window.location.href = url;
+            // নতুন উইন্ডোতে লিংকটি ওপেন হবে
+            window.open(url, "_blank");
         } else {
-            alert("দয়া করে একটি টাইটেল সিলেক্ট করুন!");
+            alert("অনুগ্রহ করে একটি টাইটেল নির্বাচন করুন।");
         }
     }
 </script>
