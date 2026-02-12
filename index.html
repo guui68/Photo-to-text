@@ -3,48 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GX Technology | RGB Pro</title>
+    <title>GX Technology | Single Color Glow</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
         
-        /* ব্যাকগ্রাউন্ড এখন ডার্ক গ্রেডিয়েন্ট */
+        /* ডার্ক ভায়োলেট-ব্লু ব্যাকগ্রাউন্ড */
         body { 
             height: 100vh; 
             display: flex; 
             justify-content: center; 
             align-items: center; 
-            background: radial-gradient(circle at center, #1a1a2e 0%, #0a0a12 100%); 
+            background: #12122b; 
             color: #fff; 
             overflow: hidden; 
         }
 
-        /* আরজিবি গ্লো কন্টেইনার */
+        /* এক কালার জ্বলমলে বর্ডার কন্টেইনার */
         .neon-wrapper {
             position: relative;
             width: 90%;
             max-width: 380px;
-            padding: 5px;
+            padding: 5px; 
             border-radius: 40px;
             display: flex;
             justify-content: center;
             align-items: center;
+            background: #000;
             overflow: visible;
         }
 
-        /* আরজিবি লাইট অ্যানিমেশন */
+        /* এখানে আপনি আপনার পছন্দমতো কালার পরিবর্তন করতে পারবেন (এখন নিওন গ্রিন দেওয়া) */
         .neon-wrapper::before {
             content: "";
             position: absolute;
             inset: -2px;
-            background: conic-gradient(#fd004c, #fe9000, #fff020, #3ede30, #17c1ff, #ad2ec1, #fd004c);
-            animation: rotateRGB 3s linear infinite;
+            background: conic-gradient(transparent, transparent, transparent, #00ff88); /* এক কালার */
+            animation: rotateGlow 2.5s linear infinite;
             border-radius: 42px;
             z-index: -1;
-            filter: blur(10px); /* আলো ছড়িয়ে পড়ার জন্য */
+            filter: blur(10px) brightness(1.8); /* অনেক বেশি জ্বলমলে ইফেক্ট */
         }
 
-        @keyframes rotateRGB {
+        @keyframes rotateGlow {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
@@ -58,7 +59,6 @@
             text-align: center;
             position: relative;
             z-index: 2;
-            border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         .brand {
@@ -68,7 +68,7 @@
             text-transform: uppercase;
         }
 
-        /* ড্রপডাউন ডিজাইন */
+        /* কাস্টম ড্রপডাউন */
         .custom-select { position: relative; width: 100%; margin-bottom: 25px; text-align: left; }
         
         .select-trigger {
@@ -77,14 +77,26 @@
             display: flex; justify-content: space-between; align-items: center;
         }
 
-        /* নামের লিস্ট পপ-আপ */
+        /* নামের লিস্ট পপ-আপ (আগের ডিজাইন) */
         .options-list {
-            position: absolute; top: 110%; left: 0; width: 100%;
-            background: #111; border: 1px solid rgba(0, 255, 136, 0.4);
-            border-radius: 20px; overflow-y: auto; 
-            max-height: 350px;
-            display: none; z-index: 999; 
-            box-shadow: 0 15px 50px rgba(0,0,0,0.9);
+            position: absolute; 
+            top: 105%; 
+            left: 0; 
+            width: 100%;
+            background: #111; 
+            border: 1px solid rgba(0, 255, 136, 0.4);
+            border-radius: 20px; 
+            overflow-y: auto; 
+            max-height: 280px; 
+            display: none; 
+            z-index: 999; 
+            box-shadow: 0 15px 40px rgba(0,0,0,0.8);
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .option-item {
@@ -99,7 +111,7 @@
             background: #00ff88; color: #000; font-weight: 900; text-transform: uppercase;
             letter-spacing: 2px; cursor: pointer; transition: 0.3s;
         }
-        .btn-launch:hover { background: #fff; transform: translateY(-2px); box-shadow: 0 10px 20px rgba(0, 255, 136, 0.2); }
+        .btn-launch:hover { background: #fff; transform: translateY(-2px); }
 
         .show { display: block !important; }
     </style>
@@ -151,8 +163,7 @@
 
         function toggleDropdown() {
             const list = document.getElementById('optionsList');
-            const isShown = list.classList.contains('show');
-            if(!isShown) fetchLinks();
+            if(!list.classList.contains('show')) fetchLinks();
             list.classList.toggle('show');
         }
 
