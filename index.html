@@ -3,128 +3,130 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GX Technology | Single Color Glow</title>
+    <title>GX Technology | Ultimate Edition</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
         
-        /* ডার্ক ভায়োলেট-ব্লু ব্যাকগ্রাউন্ড */
         body { 
-            height: 100vh; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            background: #12122b; 
-            color: #fff; 
-            overflow: hidden; 
+            height: 100vh; display: flex; justify-content: center; align-items: center; 
+            background: #12122b; /* ডার্ক ভায়োলেট-ব্লু ব্যাকগ্রাউন্ড */
+            color: #fff; overflow: hidden; 
         }
 
-        /* এক কালার জ্বলমলে বর্ডার কন্টেইনার */
-        .neon-wrapper {
+        /* সাপের মতো ঘোরা লাইট কন্টেইনার */
+        .snake-wrapper {
             position: relative;
             width: 90%;
             max-width: 380px;
-            padding: 5px; 
+            padding: 4px;
             border-radius: 40px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
             background: #000;
-            overflow: visible;
+            overflow: hidden; /* লাইট বাইরে যাবে না */
+            box-shadow: 0 0 30px rgba(0, 255, 136, 0.2);
         }
 
-        /* এখানে আপনি আপনার পছন্দমতো কালার পরিবর্তন করতে পারবেন (এখন নিওন গ্রিন দেওয়া) */
-        .neon-wrapper::before {
-            content: "";
-            position: absolute;
-            inset: -2px;
-            background: conic-gradient(transparent, transparent, transparent, #00ff88); /* এক কালার */
-            animation: rotateGlow 2.5s linear infinite;
-            border-radius: 42px;
-            z-index: -1;
-            filter: blur(10px) brightness(1.8); /* অনেক বেশি জ্বলমলে ইফেক্ট */
+        /* স্নেক এনিমেশন পার্টস */
+        .snake-wrapper span { position: absolute; display: block; }
+        
+        /* উপর থেকে ডানে */
+        .snake-wrapper span:nth-child(1) {
+            top: 0; left: -100%; width: 100%; height: 4px;
+            background: linear-gradient(90deg, transparent, #00ff88);
+            animation: snake1 2s linear infinite;
         }
+        @keyframes snake1 { 0% { left: -100%; } 50%,100% { left: 100%; } }
 
-        @keyframes rotateGlow {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        /* ডান থেকে নিচে */
+        .snake-wrapper span:nth-child(2) {
+            top: -100%; right: 0; width: 4px; height: 100%;
+            background: linear-gradient(180deg, transparent, #00ff88);
+            animation: snake2 2s linear infinite; animation-delay: 0.5s;
         }
+        @keyframes snake2 { 0% { top: -100%; } 50%,100% { top: 100%; } }
+
+        /* নিচ থেকে বামে */
+        .snake-wrapper span:nth-child(3) {
+            bottom: 0; right: -100%; width: 100%; height: 4px;
+            background: linear-gradient(270deg, transparent, #00ff88);
+            animation: snake3 2s linear infinite; animation-delay: 1s;
+        }
+        @keyframes snake3 { 0% { right: -100%; } 50%,100% { right: 100%; } }
+
+        /* বাম থেকে উপরে */
+        .snake-wrapper span:nth-child(4) {
+            bottom: -100%; left: 0; width: 4px; height: 100%;
+            background: linear-gradient(360deg, transparent, #00ff88);
+            animation: snake4 2s linear infinite; animation-delay: 1.5s;
+        }
+        @keyframes snake4 { 0% { bottom: -100%; } 50%,100% { bottom: 100%; } }
 
         /* মেইন কার্ড */
         .card {
             background: #0d0d0f; 
-            padding: 50px 25px;
+            padding: 55px 30px;
             width: 100%;
             border-radius: 36px;
             text-align: center;
             position: relative;
-            z-index: 2;
+            z-index: 5;
         }
 
         .brand {
             font-size: 32px; font-weight: 900; letter-spacing: 2px; margin-bottom: 40px;
             background: linear-gradient(180deg, #fff, #00ff88);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            text-transform: uppercase;
+            text-transform: uppercase; text-shadow: 0 0 15px rgba(0, 255, 136, 0.3);
         }
 
         /* কাস্টম ড্রপডাউন */
-        .custom-select { position: relative; width: 100%; margin-bottom: 25px; text-align: left; }
+        .custom-select { position: relative; width: 100%; margin-bottom: 30px; text-align: left; }
         
         .select-trigger {
             width: 100%; padding: 18px; background: #000; border: 1px solid #222;
             border-radius: 18px; color: #fff; font-size: 16px; cursor: pointer;
             display: flex; justify-content: space-between; align-items: center;
+            transition: 0.3s;
         }
+        .select-trigger:hover { border-color: #00ff88; }
 
-        /* নামের লিস্ট পপ-আপ (আগের ডিজাইন) */
         .options-list {
-            position: absolute; 
-            top: 105%; 
-            left: 0; 
-            width: 100%;
-            background: #111; 
-            border: 1px solid rgba(0, 255, 136, 0.4);
-            border-radius: 20px; 
-            overflow-y: auto; 
-            max-height: 280px; 
-            display: none; 
-            z-index: 999; 
-            box-shadow: 0 15px 40px rgba(0,0,0,0.8);
-            animation: fadeIn 0.3s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-5px); }
-            to { opacity: 1; transform: translateY(0); }
+            position: absolute; top: 110%; left: 0; width: 100%;
+            background: #111; border: 1px solid rgba(0, 255, 136, 0.4);
+            border-radius: 20px; overflow-y: auto; max-height: 280px;
+            display: none; z-index: 1000; box-shadow: 0 20px 50px rgba(0,0,0,0.9);
         }
 
         .option-item {
-            padding: 16px 20px; color: #eee; cursor: pointer; border-bottom: 1px solid #1a1a1a;
+            padding: 18px 20px; color: #eee; cursor: pointer; border-bottom: 1px solid #1a1a1a;
             transition: 0.2s; font-size: 15px;
         }
-        .option-item:last-child { border: none; }
-        .option-item:hover { background: #00ff88; color: #000; font-weight: 700; }
+        .option-item:hover { background: #00ff88; color: #000; font-weight: bold; }
 
         .btn-launch {
             width: 100%; padding: 18px; border: none; border-radius: 18px;
             background: #00ff88; color: #000; font-weight: 900; text-transform: uppercase;
             letter-spacing: 2px; cursor: pointer; transition: 0.3s;
         }
-        .btn-launch:hover { background: #fff; transform: translateY(-2px); }
+        .btn-launch:hover { background: #fff; transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0, 255, 136, 0.2); }
 
         .show { display: block !important; }
     </style>
 </head>
 <body>
 
-    <div class="neon-wrapper">
+    <div class="snake-wrapper">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+
         <div class="card">
             <div class="brand">GX TECHNOLOGY</div>
             
             <div class="custom-select">
                 <div class="select-trigger" onclick="toggleDropdown()">
-                    <span id="selectedText">টাইটেল সিলেক্ট করুন</span>
+                    <span id="selectedText">টাইটেল বেছে নিন</span>
                     <span>▼</span>
                 </div>
                 <div class="options-list" id="optionsList">
@@ -140,9 +142,10 @@
         const jsonUrl = 'https://raw.githubusercontent.com/guui68/Photo-to-text/main/links.json';
         let currentUrl = "";
 
+        // ডাটা রিফ্রেশ প্রযুক্তি (ক্যাশিং এড়াতে nocache ব্যবহার করা হয়েছে)
         async function fetchLinks() {
             try {
-                const res = await fetch(`${jsonUrl}?nocache=${Date.now()}`);
+                const res = await fetch(`${jsonUrl}?nocache=${new Date().getTime()}`);
                 const data = await res.json();
                 const list = document.getElementById('optionsList');
                 list.innerHTML = "";
@@ -158,26 +161,37 @@
                     };
                     list.appendChild(div);
                 });
-            } catch(e) { console.log("Load Error"); }
+            } catch(e) { 
+                console.log("Error fetching data. Check your GitHub link."); 
+            }
         }
 
         function toggleDropdown() {
             const list = document.getElementById('optionsList');
-            if(!list.classList.contains('show')) fetchLinks();
+            const isShown = list.classList.contains('show');
+            
+            // খোলার সময় লেটেস্ট ডাটা রিফ্রেশ করবে
+            if(!isShown) fetchLinks();
+            
             list.classList.toggle('show');
         }
 
         function launchNow() {
-            if(currentUrl) window.location.href = currentUrl;
-            else alert("দয়া করে একটি টাইটেল সিলেক্ট করুন!");
+            if(currentUrl) {
+                window.location.href = currentUrl;
+            } else {
+                alert("দয়া করে আগে একটি টাইটেল সিলেক্ট করুন!");
+            }
         }
 
+        // স্ক্রিনের অন্য জায়গায় ক্লিক করলে ড্রপডাউন বন্ধ হবে
         window.onclick = function(event) {
             if (!event.target.closest('.custom-select')) {
                 document.getElementById('optionsList').classList.remove('show');
             }
         }
-        
+
+        // শুরুতে একবার লোড করে রাখা
         fetchLinks();
     </script>
 </body>
