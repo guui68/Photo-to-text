@@ -3,34 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GX Technology | RGB Edition</title>
+    <title>GX Technology | RGB Pro</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-        body { height: 100vh; display: flex; justify-content: center; align-items: center; background: #000; color: #fff; overflow: hidden; }
+        
+        /* ব্যাকগ্রাউন্ড এখন ডার্ক গ্রেডিয়েন্ট */
+        body { 
+            height: 100vh; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            background: radial-gradient(circle at center, #1a1a2e 0%, #0a0a12 100%); 
+            color: #fff; 
+            overflow: hidden; 
+        }
 
-        /* RGB ঘোরানো বর্ডারের কন্টেইনার */
+        /* আরজিবি গ্লো কন্টেইনার */
         .neon-wrapper {
             position: relative;
             width: 90%;
             max-width: 380px;
-            padding: 4px; /* বর্ডারের পুরুত্ব */
+            padding: 5px;
             border-radius: 40px;
-            overflow: hidden;
             display: flex;
             justify-content: center;
             align-items: center;
+            overflow: visible;
         }
 
-        /* মাল্টি-কালার লাইট যা অনবরত ঘুরবে */
+        /* আরজিবি লাইট অ্যানিমেশন */
         .neon-wrapper::before {
             content: "";
             position: absolute;
-            width: 150%;
-            height: 150%;
+            inset: -2px;
             background: conic-gradient(#fd004c, #fe9000, #fff020, #3ede30, #17c1ff, #ad2ec1, #fd004c);
             animation: rotateRGB 3s linear infinite;
+            border-radius: 42px;
             z-index: -1;
+            filter: blur(10px); /* আলো ছড়িয়ে পড়ার জন্য */
         }
 
         @keyframes rotateRGB {
@@ -38,14 +49,16 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* কার্ডের মেইন বডি (কালার লাইটের ওপরের স্তর) */
+        /* মেইন কার্ড */
         .card {
             background: #0d0d0f; 
-            padding: 50px 30px;
+            padding: 50px 25px;
             width: 100%;
             border-radius: 36px;
             text-align: center;
+            position: relative;
             z-index: 2;
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         .brand {
@@ -55,7 +68,7 @@
             text-transform: uppercase;
         }
 
-        /* কাস্টম ড্রপডাউন ডিজাইন */
+        /* ড্রপডাউন ডিজাইন */
         .custom-select { position: relative; width: 100%; margin-bottom: 25px; text-align: left; }
         
         .select-trigger {
@@ -64,27 +77,31 @@
             display: flex; justify-content: space-between; align-items: center;
         }
 
+        /* নামের লিস্ট পপ-আপ */
         .options-list {
             position: absolute; top: 110%; left: 0; width: 100%;
-            background: #0d0d0f; border: 1px solid rgba(0, 255, 136, 0.3);
-            border-radius: 20px; overflow-y: auto; max-height: 250px;
-            display: none; z-index: 100; box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+            background: #111; border: 1px solid rgba(0, 255, 136, 0.4);
+            border-radius: 20px; overflow-y: auto; 
+            max-height: 350px;
+            display: none; z-index: 999; 
+            box-shadow: 0 15px 50px rgba(0,0,0,0.9);
         }
 
         .option-item {
-            padding: 15px 20px; color: #ccc; cursor: pointer; border-bottom: 1px solid #1a1a1a;
-            transition: 0.3s;
+            padding: 16px 20px; color: #eee; cursor: pointer; border-bottom: 1px solid #1a1a1a;
+            transition: 0.2s; font-size: 15px;
         }
-        .option-item:hover { background: #00ff88; color: #000; font-weight: bold; }
+        .option-item:last-child { border: none; }
+        .option-item:hover { background: #00ff88; color: #000; font-weight: 700; }
 
         .btn-launch {
             width: 100%; padding: 18px; border: none; border-radius: 18px;
             background: #00ff88; color: #000; font-weight: 900; text-transform: uppercase;
             letter-spacing: 2px; cursor: pointer; transition: 0.3s;
         }
-        .btn-launch:hover { background: #fff; transform: scale(1.02); }
+        .btn-launch:hover { background: #fff; transform: translateY(-2px); box-shadow: 0 10px 20px rgba(0, 255, 136, 0.2); }
 
-        .show { display: block; }
+        .show { display: block !important; }
     </style>
 </head>
 <body>
@@ -117,6 +134,7 @@
                 const data = await res.json();
                 const list = document.getElementById('optionsList');
                 list.innerHTML = "";
+                
                 data.forEach(item => {
                     let div = document.createElement('div');
                     div.className = "option-item";
@@ -133,7 +151,8 @@
 
         function toggleDropdown() {
             const list = document.getElementById('optionsList');
-            if(!list.classList.contains('show')) fetchLinks();
+            const isShown = list.classList.contains('show');
+            if(!isShown) fetchLinks();
             list.classList.toggle('show');
         }
 
