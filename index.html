@@ -7,60 +7,119 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-        body { height: 100vh; display: flex; justify-content: center; align-items: center; background: #000; color: #fff; overflow: hidden; }
+        
+        body { 
+            height: 100vh; display: flex; justify-content: center; align-items: center; 
+            background: #020205; color: #fff; overflow: hidden; position: relative;
+        }
+
+        /* প্রিমিয়াম ব্যাকগ্রাউন্ড গ্লো */
+        body::before {
+            content: ""; position: absolute; width: 450px; height: 450px;
+            background: radial-gradient(circle, rgba(0, 255, 136, 0.08) 0%, transparent 70%);
+            top: -10%; left: -10%; animation: moveGlow 10s infinite alternate;
+        }
+
+        @keyframes moveGlow { from { transform: translate(0,0); } to { transform: translate(50px, 50px); } }
+
+        /* মেইন প্রিমিয়াম কার্ড ডিজাইন */
         .card {
-            background: rgba(20, 20, 25, 0.7); backdrop-filter: blur(20px);
-            padding: 50px 30px; width: 90%; max-width: 400px; border-radius: 35px;
+            background: linear-gradient(145deg, rgba(30, 30, 35, 0.8), rgba(10, 10, 12, 0.95));
+            backdrop-filter: blur(20px);
+            padding: 55px 35px; width: 92%; max-width: 380px; border-radius: 40px;
             border: 1px solid rgba(255, 255, 255, 0.08); text-align: center;
-            box-shadow: 0 50px 100px rgba(0,0,0,0.8); animation: zoomIn 0.8s ease;
+            box-shadow: 0 40px 80px rgba(0,0,0,0.8);
+            z-index: 10; animation: entrance 1s ease-out;
         }
-        @keyframes zoomIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+
+        @keyframes entrance {
+            from { opacity: 0; transform: scale(0.9) translateY(30px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
         .brand {
-            font-size: clamp(24px, 8vw, 32px); font-weight: 900; letter-spacing: 1px;
-            margin-bottom: 40px; white-space: nowrap; overflow: visible;
-            background: linear-gradient(to right, #fff, #00ff88);
+            font-size: 32px; font-weight: 900; letter-spacing: 2px; margin-bottom: 40px;
+            background: linear-gradient(to bottom, #fff, #00ff88);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+            filter: drop-shadow(0 0 10px rgba(0, 255, 136, 0.2));
         }
+
+        .input-wrap { margin-bottom: 25px; }
+
         select { 
-            width: 100%; padding: 18px; background: #111; border: 1px solid #222; 
-            border-radius: 15px; color: #fff; font-size: 16px; margin-bottom: 25px; outline: none;
+            width: 100%; padding: 18px; background: rgba(0, 0, 0, 0.6); border: 1px solid #333; 
+            border-radius: 20px; color: #fff; font-size: 16px; outline: none;
+            cursor: pointer; transition: 0.3s;
         }
+
+        select:focus { border-color: #00ff88; box-shadow: 0 0 15px rgba(0, 255, 136, 0.1); }
+
         .btn-launch {
-            width: 100%; padding: 18px; border: none; border-radius: 15px;
-            background: #00ff88; color: #000; font-weight: 900;
+            width: 100%; padding: 18px; border: none; border-radius: 20px;
+            background: #fff; color: #000; font-weight: 900;
             text-transform: uppercase; letter-spacing: 2px; cursor: pointer;
-            transition: 0.3s;
+            transition: all 0.4s ease;
         }
-        .btn-launch:hover { background: #fff; transform: translateY(-3px); }
+
+        .btn-launch:hover { 
+            background: #00ff88; transform: translateY(-3px); 
+            box-shadow: 0 15px 30px rgba(0, 255, 136, 0.2); 
+        }
+
+        .btn-launch:active { transform: scale(0.96); }
+
+        .footer-status { margin-top: 20px; font-size: 11px; color: #555; letter-spacing: 1px; }
     </style>
 </head>
 <body>
+
     <div class="card">
         <div class="brand">GX TECHNOLOGY</div>
-        <select id="linkMenu"><option disabled selected>Loading...</option></select>
-        <button class="btn-launch" onclick="go()">Launch</button>
+        
+        <div class="input-wrap">
+            <select id="linkMenu">
+                <option disabled selected>Connecting...</option>
+            </select>
+        </div>
+
+        <button class="btn-launch" onclick="launchNow()">Launch Now</button>
+        
+        <div class="footer-status">ENCRYPTED CONNECTION</div>
     </div>
+
     <script>
         const jsonUrl = 'https://raw.githubusercontent.com/guui68/Photo-to-text/main/links.json';
-        async function load() {
+
+        async function fetchLinks() {
             try {
                 const res = await fetch(jsonUrl + '?t=' + Date.now());
                 const data = await res.json();
                 const menu = document.getElementById('linkMenu');
-                menu.innerHTML = '<option value="" disabled selected>Select Option</option>';
+                
+                menu.innerHTML = '<option value="" disabled selected>একটি টাইটেল সিলেক্ট করুন</option>';
                 data.forEach(item => {
                     let opt = document.createElement('option');
-                    opt.value = item.url; opt.textContent = item.title;
+                    opt.value = item.url; 
+                    opt.textContent = item.title;
                     menu.appendChild(opt);
                 });
-            } catch(e) { console.log("Error"); }
+            } catch(e) { 
+                document.getElementById('linkMenu').innerHTML = '<option>Load Failed</option>';
+            }
         }
-        function go() {
+
+        function launchNow() {
             const url = document.getElementById('linkMenu').value;
-            if(url) window.location.href = url;
-            else alert("Select a title!");
+            if(url) {
+                // সরাসরি নতুন ট্যাবে বা বর্তমান ব্রাউজারে ওপেন হবে
+                window.location.href = url;
+            } else {
+                alert("দয়া করে আগে একটি টাইটেল সিলেক্ট করুন!");
+            }
         }
-        load();
+
+        fetchLinks();
     </script>
 </body>
 </html>
