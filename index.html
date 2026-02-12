@@ -3,184 +3,64 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GX Technology | Premium</title>
+    <title>GX Technology | Home</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-
-        body {
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background: #020205;
-            color: #fff;
-            overflow: hidden;
-            position: relative;
-        }
-
-        /* ব্যাকগ্রাউন্ডে অ্যানিমেটেড গ্লো ইফেক্ট */
-        .bg-glow {
-            position: absolute;
-            width: 500px;
-            height: 500px;
-            background: radial-gradient(circle, rgba(0, 255, 136, 0.15) 0%, transparent 70%);
-            border-radius: 50%;
-            top: -100px;
-            right: -100px;
-            animation: move 10s infinite alternate;
-            z-index: 0;
-        }
-
-        @keyframes move {
-            from { transform: translate(0, 0); }
-            to { transform: translate(-100px, 100px); }
-        }
-
+        body { height: 100vh; display: flex; justify-content: center; align-items: center; background: #000; color: #fff; overflow: hidden; }
         .card {
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(20px);
-            padding: 60px 40px;
-            width: 380px;
-            border-radius: 40px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            text-align: center;
-            box-shadow: 0 40px 100px rgba(0, 0, 0, 0.6);
-            z-index: 1;
-            animation: fadeIn 1.2s ease-out;
+            background: rgba(20, 20, 25, 0.7); backdrop-filter: blur(20px);
+            padding: 50px 30px; width: 90%; max-width: 400px; border-radius: 35px;
+            border: 1px solid rgba(255, 255, 255, 0.08); text-align: center;
+            box-shadow: 0 50px 100px rgba(0,0,0,0.8); animation: zoomIn 0.8s ease;
         }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
+        @keyframes zoomIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+        .brand {
+            font-size: clamp(24px, 8vw, 32px); font-weight: 900; letter-spacing: 1px;
+            margin-bottom: 40px; white-space: nowrap; overflow: visible;
+            background: linear-gradient(to right, #fff, #00ff88);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         }
-
-        /* উপরে GX technology লেখাটি */
-        .brand-logo {
-            font-size: 32px;
-            font-weight: 900;
-            letter-spacing: 3px;
-            margin-bottom: 40px;
-            text-transform: uppercase;
-            background: linear-gradient(135deg, #ffffff 0%, #00ff88 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0 0 10px rgba(0, 255, 136, 0.3));
+        select { 
+            width: 100%; padding: 18px; background: #111; border: 1px solid #222; 
+            border-radius: 15px; color: #fff; font-size: 16px; margin-bottom: 25px; outline: none;
         }
-
-        .dropdown-container {
-            margin-bottom: 30px;
-            position: relative;
-        }
-
-        select {
-            width: 100%;
-            padding: 16px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
-            color: #eee;
-            font-size: 15px;
-            outline: none;
-            cursor: pointer;
-            transition: 0.3s;
-            appearance: none; /* ডিফল্ট আইকন রিমুভ */
-        }
-
-        select:focus {
-            border-color: #00ff88;
-            box-shadow: 0 0 15px rgba(0, 255, 136, 0.2);
-        }
-
         .btn-launch {
-            width: 100%;
-            padding: 16px;
-            border: none;
-            border-radius: 15px;
-            background: #fff;
-            color: #000;
-            font-weight: 800;
-            font-size: 14px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            position: relative;
-            overflow: hidden;
+            width: 100%; padding: 18px; border: none; border-radius: 15px;
+            background: #00ff88; color: #000; font-weight: 900;
+            text-transform: uppercase; letter-spacing: 2px; cursor: pointer;
+            transition: 0.3s;
         }
-
-        .btn-launch:hover {
-            transform: scale(1.05);
-            box-shadow: 0 10px 30px rgba(255, 255, 255, 0.3);
-        }
-
-        .btn-launch:active {
-            transform: scale(0.98);
-        }
-
-        .loading-dots {
-            font-size: 12px;
-            color: #666;
-            margin-top: 15px;
-            letter-spacing: 1px;
-        }
+        .btn-launch:hover { background: #fff; transform: translateY(-3px); }
     </style>
 </head>
 <body>
-
-    <div class="bg-glow"></div>
-
     <div class="card">
-        <div class="brand-logo">GX Technology</div>
-        
-        <div class="dropdown-container">
-            <select id="linkMenu">
-                <option value="" disabled selected>Loading links...</option>
-            </select>
-        </div>
-
-        <button class="btn-launch" onclick="launchLink()">Launch Portal</button>
-        
-        <div id="status" class="loading-dots">CONNECTED TO DATABASE</div>
+        <div class="brand">GX TECHNOLOGY</div>
+        <select id="linkMenu"><option disabled selected>Loading...</option></select>
+        <button class="btn-launch" onclick="go()">Launch</button>
     </div>
-
     <script>
         const jsonUrl = 'https://raw.githubusercontent.com/guui68/Photo-to-text/main/links.json';
-
-        // ডাটা লোড করার ফাংশন
-        async function loadLinks() {
+        async function load() {
             try {
-                // ক্যাশ এড়াতে টাইমস্ট্যাম্প ব্যবহার করা হয়েছে
-                const response = await fetch(jsonUrl + '?t=' + Date.now());
-                const data = await response.json();
+                const res = await fetch(jsonUrl + '?t=' + Date.now());
+                const data = await res.json();
                 const menu = document.getElementById('linkMenu');
-                
-                menu.innerHTML = '<option value="" disabled selected>Select an option</option>';
-                
+                menu.innerHTML = '<option value="" disabled selected>Select Option</option>';
                 data.forEach(item => {
-                    let option = document.createElement('option');
-                    option.value = item.url;
-                    option.textContent = item.title;
-                    menu.appendChild(option);
+                    let opt = document.createElement('option');
+                    opt.value = item.url; opt.textContent = item.title;
+                    menu.appendChild(opt);
                 });
-            } catch (error) {
-                document.getElementById('status').innerText = "ERROR LOADING DATA";
-                document.getElementById('status').style.color = "red";
-            }
+            } catch(e) { console.log("Error"); }
         }
-
-        function launchLink() {
+        function go() {
             const url = document.getElementById('linkMenu').value;
-            if (url) {
-                // স্মুথ ট্রানজিশন দিয়ে লিংক ওপেন
-                window.location.href = url;
-            } else {
-                alert("অনুগ্রহ করে একটি টাইটেল সিলেক্ট করুন।");
-            }
+            if(url) window.location.href = url;
+            else alert("Select a title!");
         }
-
-        // পেজ লোড হলে কল হবে
-        loadLinks();
+        load();
     </script>
 </body>
 </html>
