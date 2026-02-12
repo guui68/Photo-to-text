@@ -3,63 +3,142 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GX Technology | Home</title>
+    <title>GX Technology | Premium Portal</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-        body { height: 100vh; display: flex; justify-content: center; align-items: center; background: #000; color: #fff; overflow: hidden; }
+        
+        body { 
+            height: 100vh; display: flex; justify-content: center; align-items: center; 
+            background: #020205; color: #fff; overflow: hidden; position: relative;
+        }
+
+        /* প্রিমিয়াম ব্যাকগ্রাউন্ড অ্যানিমেশন */
+        body::before {
+            content: ""; position: absolute; width: 400px; height: 400px;
+            background: radial-gradient(circle, rgba(0, 255, 136, 0.1) 0%, transparent 70%);
+            top: -10%; right: -5%; animation: pulse 8s infinite alternate;
+        }
+
+        @keyframes pulse { from { opacity: 0.3; transform: scale(1); } to { opacity: 0.7; transform: scale(1.2); } }
+
+        /* মেইন প্রিমিয়াম কার্ড */
         .card {
-            background: rgba(20, 20, 25, 0.7); backdrop-filter: blur(20px);
-            padding: 50px 30px; width: 90%; max-width: 400px; border-radius: 35px;
-            border: 1px solid rgba(255, 255, 255, 0.08); text-align: center;
-            box-shadow: 0 50px 100px rgba(0,0,0,0.8); animation: zoomIn 0.8s ease;
+            background: linear-gradient(145deg, rgba(25, 25, 30, 0.9), rgba(10, 10, 12, 0.95));
+            backdrop-filter: blur(25px);
+            padding: 60px 40px; width: 90%; max-width: 400px; border-radius: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.1); text-align: center;
+            box-shadow: 0 50px 100px rgba(0,0,0,0.9), inset 0 0 20px rgba(255,255,255,0.02);
+            z-index: 10; animation: slideUp 0.8s ease;
         }
-        @keyframes zoomIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+
+        @keyframes slideUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+
         .brand {
-            font-size: clamp(24px, 8vw, 32px); font-weight: 900; letter-spacing: 1px;
-            margin-bottom: 40px; white-space: nowrap; overflow: visible;
-            background: linear-gradient(to right, #fff, #00ff88);
+            font-size: 32px; font-weight: 900; letter-spacing: 2px; margin-bottom: 40px;
+            background: linear-gradient(to bottom, #fff, #00ff88);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
         }
+
         select { 
-            width: 100%; padding: 18px; background: #111; border: 1px solid #222; 
-            border-radius: 15px; color: #fff; font-size: 16px; margin-bottom: 25px; outline: none;
+            width: 100%; padding: 18px; background: rgba(0, 0, 0, 0.5); border: 1px solid #333; 
+            border-radius: 18px; color: #fff; font-size: 16px; margin-bottom: 25px; outline: none;
+            cursor: pointer; transition: 0.3s;
         }
+
+        select:focus { border-color: #00ff88; box-shadow: 0 0 15px rgba(0, 255, 136, 0.2); }
+
         .btn-launch {
-            width: 100%; padding: 18px; border: none; border-radius: 15px;
-            background: #00ff88; color: #000; font-weight: 900;
+            width: 100%; padding: 18px; border: none; border-radius: 18px;
+            background: #fff; color: #000; font-weight: 900;
             text-transform: uppercase; letter-spacing: 2px; cursor: pointer;
-            transition: 0.3s;
+            transition: 0.4s;
         }
-        .btn-launch:hover { background: #fff; transform: translateY(-3px); }
+
+        .btn-launch:hover { background: #00ff88; transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0, 255, 136, 0.2); }
+
+        /* ব্রাউজার চয়েস মোডাল (Popup) */
+        #browser-modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9); display: none; justify-content: center; align-items: center;
+            z-index: 1000; backdrop-filter: blur(10px);
+        }
+
+        .modal-content {
+            background: #111; padding: 40px; border-radius: 30px; width: 320px;
+            text-align: center; border: 1px solid #222;
+        }
+
+        .browser-option {
+            display: block; width: 100%; padding: 15px; margin: 10px 0;
+            background: #1a1a1a; border: 1px solid #333; border-radius: 15px;
+            color: #fff; text-decoration: none; font-weight: bold; transition: 0.3s;
+        }
+
+        .browser-option:hover { background: #00ff88; color: #000; }
     </style>
 </head>
 <body>
+
     <div class="card">
         <div class="brand">GX TECHNOLOGY</div>
-        <select id="linkMenu"><option disabled selected>Loading...</option></select>
-        <button class="btn-launch" onclick="go()">Launch</button>
+        <select id="linkMenu"><option disabled selected>Fetching links...</option></select>
+        <button class="btn-launch" onclick="showBrowsers()">Launch Portal</button>
     </div>
+
+    <div id="browser-modal">
+        <div class="modal-content">
+            <h3 style="margin-bottom: 20px; font-size: 16px;">Select Browser</h3>
+            <a href="#" class="browser-option" onclick="openUrl('chrome')">Google Chrome</a>
+            <a href="#" class="browser-option" onclick="openUrl('opera')">Opera Mini</a>
+            <a href="#" class="browser-option" onclick="openUrl('default')">Default Browser</a>
+            <button onclick="closeModal()" style="background:none; border:none; color:#555; margin-top:15px; cursor:pointer;">Cancel</button>
+        </div>
+    </div>
+
     <script>
         const jsonUrl = 'https://raw.githubusercontent.com/guui68/Photo-to-text/main/links.json';
+        let selectedUrl = "";
+
         async function load() {
             try {
                 const res = await fetch(jsonUrl + '?t=' + Date.now());
                 const data = await res.json();
                 const menu = document.getElementById('linkMenu');
-                menu.innerHTML = '<option value="" disabled selected>Select Option</option>';
+                menu.innerHTML = '<option value="" disabled selected>Select an option</option>';
                 data.forEach(item => {
                     let opt = document.createElement('option');
                     opt.value = item.url; opt.textContent = item.title;
                     menu.appendChild(opt);
                 });
-            } catch(e) { console.log("Error"); }
+            } catch(e) { console.log("Load error"); }
         }
-        function go() {
-            const url = document.getElementById('linkMenu').value;
-            if(url) window.location.href = url;
-            else alert("Select a title!");
+
+        function showBrowsers() {
+            selectedUrl = document.getElementById('linkMenu').value;
+            if(!selectedUrl) return alert("দয়া করে একটি টাইটেল সিলেক্ট করুন!");
+            document.getElementById('browser-modal').style.display = 'flex';
         }
+
+        function closeModal() {
+            document.getElementById('browser-modal').style.display = 'none';
+        }
+
+        function openUrl(type) {
+            let finalUrl = selectedUrl;
+            
+            // বিভিন্ন ব্রাউজারের জন্য ইন্টেন্ট হ্যান্ডলিং (মোবাইল অ্যাপের জন্য)
+            if(type === 'chrome') {
+                window.location.href = "googlechrome://navigate?url=" + finalUrl;
+            } else if(type === 'opera') {
+                window.location.href = "opera-http://" + finalUrl.replace("https://", "");
+            } else {
+                window.open(finalUrl, '_blank');
+            }
+            closeModal();
+        }
+
         load();
     </script>
 </body>
