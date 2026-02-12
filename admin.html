@@ -2,37 +2,57 @@
 <html lang="bn">
 <head>
     <meta charset="UTF-8">
-    <title>GX Admin Control</title>
+    <title>GX Admin | High Quality</title>
     <style>
-        body { background: #0a0a0a; color: white; font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .box { background: #111; padding: 35px; border-radius: 20px; width: 330px; border: 1px solid #222; text-align: center; }
-        h3 { color: #00ff88; margin-bottom: 20px; }
-        input { width: 100%; padding: 12px; margin-bottom: 15px; background: #1a1a1a; border: 1px solid #333; color: #fff; border-radius: 10px; box-sizing: border-box; outline: none; }
-        button { width: 100%; padding: 12px; background: #00ff88; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; color: #000; }
-        #status { font-size: 12px; margin-top: 15px; }
+        body { background: #08080a; color: white; font-family: 'Inter', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .admin-container { 
+            background: linear-gradient(145deg, #111, #0a0a0a); 
+            padding: 50px; border-radius: 35px; width: 400px; 
+            border: 1px solid #222; box-shadow: 0 40px 80px rgba(0,0,0,0.7);
+        }
+        h2 { text-align: center; color: #fff; margin-bottom: 35px; font-weight: 300; letter-spacing: 2px; }
+        label { font-size: 12px; color: #555; text-transform: uppercase; margin-left: 5px; }
+        input { 
+            width: 100%; padding: 16px; margin: 8px 0 25px 0; background: #000; 
+            border: 1px solid #222; color: #00ff88; border-radius: 15px; 
+            box-sizing: border-box; outline: none; transition: 0.3s;
+        }
+        input:focus { border-color: #00ff88; background: #050505; }
+        button { 
+            width: 100%; padding: 18px; background: #00ff88; border: none; 
+            border-radius: 15px; font-weight: 900; cursor: pointer; 
+            color: #000; text-transform: uppercase; letter-spacing: 1px;
+            transition: 0.4s ease;
+        }
+        button:hover { background: #fff; box-shadow: 0 10px 30px rgba(0, 255, 136, 0.3); }
+        #status { font-size: 13px; margin-top: 20px; text-align: center; font-weight: bold; }
     </style>
 </head>
 <body>
-    <div class="box">
-        <h3>Admin Access</h3>
-        <input type="text" id="tTitle" placeholder="টাইটেল (যেমন: রশিদ লিংক)">
-        <input type="text" id="tUrl" placeholder="লিংক (https://...)">
-        <button onclick="save()">Add & Save</button>
+    <div class="admin-container">
+        <h2>Admin Portal</h2>
+        <label>Link Title</label>
+        <input type="text" id="tTitle" placeholder="e.g. Translation Link">
+        <label>Destination URL</label>
+        <input type="text" id="tUrl" placeholder="https://example.com">
+        <button onclick="save()">Save to Database</button>
         <div id="status"></div>
     </div>
     <script>
         const TOKEN = "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";
         const USER = "guui68";
-        const REPO = "Photo-to-text"; // এখানে পরিবর্তন করা হয়েছে
+        const REPO = "Photo-to-text";
         const FILE = "links.json";
 
         async function save() {
             const title = document.getElementById('tTitle').value;
             const url = document.getElementById('tUrl').value;
             const status = document.getElementById('status');
-            if(!title || !url) return alert("সব ঘর পূরণ করুন!");
-            status.innerText = "প্রসেসিং...";
-            status.style.color = "yellow";
+            if(!title || !url) return alert("All fields are required!");
+            
+            status.innerText = "Syncing with GitHub...";
+            status.style.color = "#00ff88";
+
             const apiUrl = `https://api.github.com/repos/${USER}/${REPO}/contents/${FILE}`;
             try {
                 const res = await fetch(apiUrl, { headers: { "Authorization": `token ${TOKEN}` } });
@@ -47,18 +67,17 @@
                     method: "PUT",
                     headers: { "Authorization": `token ${TOKEN}`, "Content-Type": "application/json" },
                     body: JSON.stringify({
-                        message: "Update from website",
+                        message: "Add link",
                         content: btoa(unescape(encodeURIComponent(JSON.stringify(currentData, null, 2)))),
                         sha: sha || undefined
                     })
                 });
                 if(update.ok) {
-                    status.innerText = "সফলভাবে সেভ হয়েছে!";
-                    status.style.color = "#00ff88";
+                    status.innerText = "✓ SUCCESSFULLY PUBLISHED";
                     document.getElementById('tTitle').value = "";
                     document.getElementById('tUrl').value = "";
-                } else { status.innerText = "এরর! টোকেন পারমিশন চেক করুন।"; status.style.color = "red"; }
-            } catch (e) { status.innerText = "Error!"; }
+                } else { status.innerText = "Error: Invalid Token or Path"; status.style.color = "red"; }
+            } catch (e) { status.innerText = "Connection Failed"; }
         }
     </script>
 </body>
