@@ -2,83 +2,176 @@
 <html lang="bn">
 <head>
     <meta charset="UTF-8">
-    <title>GX Admin | High Quality</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GX Admin | Pro Dashboard</title>
     <style>
-        body { background: #08080a; color: white; font-family: 'Inter', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .admin-container { 
-            background: linear-gradient(145deg, #111, #0a0a0a); 
-            padding: 50px; border-radius: 35px; width: 400px; 
-            border: 1px solid #222; box-shadow: 0 40px 80px rgba(0,0,0,0.7);
-        }
-        h2 { text-align: center; color: #fff; margin-bottom: 35px; font-weight: 300; letter-spacing: 2px; }
-        label { font-size: 12px; color: #555; text-transform: uppercase; margin-left: 5px; }
-        input { 
-            width: 100%; padding: 16px; margin: 8px 0 25px 0; background: #000; 
-            border: 1px solid #222; color: #00ff88; border-radius: 15px; 
-            box-sizing: border-box; outline: none; transition: 0.3s;
-        }
-        input:focus { border-color: #00ff88; background: #050505; }
-        button { 
-            width: 100%; padding: 18px; background: #00ff88; border: none; 
-            border-radius: 15px; font-weight: 900; cursor: pointer; 
-            color: #000; text-transform: uppercase; letter-spacing: 1px;
-            transition: 0.4s ease;
-        }
-        button:hover { background: #fff; box-shadow: 0 10px 30px rgba(0, 255, 136, 0.3); }
-        #status { font-size: 13px; margin-top: 20px; text-align: center; font-weight: bold; }
+        :root { --primary: #00ff88; --bg: #050505; --card: #111; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background: var(--bg); color: #fff; padding: 20px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+
+        .container { width: 100%; max-width: 500px; }
+        
+        /* হেডার ও স্ট্যাটাস */
+        .header { text-align: center; margin-bottom: 30px; padding: 20px; background: var(--card); border-radius: 20px; border: 1px solid #222; }
+        .header h2 { font-size: 22px; letter-spacing: 2px; color: var(--primary); }
+        .stats { font-size: 14px; color: #888; margin-top: 10px; }
+
+        /* ইনপুট বক্স */
+        .input-group { background: var(--card); padding: 25px; border-radius: 25px; border: 1px solid #222; margin-bottom: 30px; }
+        input { width: 100%; padding: 14px; margin-bottom: 15px; background: #000; border: 1px solid #333; color: var(--primary); border-radius: 12px; outline: none; }
+        .btn-save { width: 100%; padding: 14px; background: var(--primary); border: none; border-radius: 12px; font-weight: 800; cursor: pointer; color: #000; transition: 0.3s; }
+        .btn-save:hover { background: #fff; transform: translateY(-2px); }
+
+        /* লিংক লিস্ট */
+        .list-container { width: 100%; }
+        .link-item { background: #161616; padding: 15px; border-radius: 15px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #222; }
+        .link-info { flex: 1; }
+        .link-info h4 { font-size: 15px; color: #fff; }
+        .link-info p { font-size: 11px; color: #555; }
+        
+        .actions button { padding: 8px 12px; margin-left: 5px; border: none; border-radius: 8px; cursor: pointer; font-size: 12px; font-weight: bold; }
+        .edit-btn { background: #333; color: #00ff88; }
+        .delete-btn { background: #331111; color: #ff4444; }
+        
+        #loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: none; justify-content: center; align-items: center; z-index: 100; }
     </style>
 </head>
 <body>
-    <div class="admin-container">
-        <h2>Admin Portal</h2>
-        <label>Link Title</label>
-        <input type="text" id="tTitle" placeholder="e.g. Translation Link">
-        <label>Destination URL</label>
-        <input type="text" id="tUrl" placeholder="https://example.com">
-        <button onclick="save()">Save to Database</button>
-        <div id="status"></div>
+
+<div id="loading-overlay">প্রসেসিং...</div>
+
+<div class="container">
+    <div class="header">
+        <h2>GX ADMIN PRO</h2>
+        <div class="stats">মোট লিঙ্ক আছে: <span id="count">0</span>টি</div>
     </div>
-    <script>
-        const TOKEN = "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";
-        const USER = "guui68";
-        const REPO = "Photo-to-text";
-        const FILE = "links.json";
 
-        async function save() {
-            const title = document.getElementById('tTitle').value;
-            const url = document.getElementById('tUrl').value;
-            const status = document.getElementById('status');
-            if(!title || !url) return alert("All fields are required!");
-            
-            status.innerText = "Syncing with GitHub...";
-            status.style.color = "#00ff88";
+    <div class="input-group">
+        <input type="hidden" id="editIndex" value="-1">
+        <input type="text" id="tTitle" placeholder="টাইটেল লিখুন">
+        <input type="text" id="tUrl" placeholder="লিঙ্ক দিন (URL)">
+        <button class="btn-save" id="saveBtn" onclick="handleSave()">Save Link</button>
+    </div>
 
-            const apiUrl = `https://api.github.com/repos/${USER}/${REPO}/contents/${FILE}`;
-            try {
-                const res = await fetch(apiUrl, { headers: { "Authorization": `token ${TOKEN}` } });
-                let sha = ""; let currentData = [];
-                if(res.ok) {
-                    const json = await res.json();
-                    sha = json.sha;
-                    currentData = JSON.parse(atob(json.content));
-                }
-                currentData.push({ title, url });
-                const update = await fetch(apiUrl, {
-                    method: "PUT",
-                    headers: { "Authorization": `token ${TOKEN}`, "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        message: "Add link",
-                        content: btoa(unescape(encodeURIComponent(JSON.stringify(currentData, null, 2)))),
-                        sha: sha || undefined
-                    })
-                });
-                if(update.ok) {
-                    status.innerText = "✓ SUCCESSFULLY PUBLISHED";
-                    document.getElementById('tTitle').value = "";
-                    document.getElementById('tUrl').value = "";
-                } else { status.innerText = "Error: Invalid Token or Path"; status.style.color = "red"; }
-            } catch (e) { status.innerText = "Connection Failed"; }
+    <div class="list-container" id="linkList">
+        </div>
+</div>
+
+<script>
+    const TOKEN = "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";
+    const USER = "guui68";
+    const REPO = "Photo-to-text";
+    const FILE = "links.json";
+    const apiUrl = `https://api.github.com/repos/${USER}/${REPO}/contents/${FILE}`;
+
+    let allLinks = [];
+    let fileSha = "";
+
+    // ডাটা লোড করা
+    async function loadData() {
+        try {
+            const res = await fetch(apiUrl, { headers: { "Authorization": `token ${TOKEN}` } });
+            if (res.ok) {
+                const json = await res.json();
+                fileSha = json.sha;
+                allLinks = JSON.parse(atob(json.content));
+                renderList();
+            }
+        } catch (e) { console.error("Load failed"); }
+    }
+
+    // লিস্ট তৈরি করা
+    function renderList() {
+        const listDiv = document.getElementById('linkList');
+        document.getElementById('count').innerText = allLinks.length;
+        listDiv.innerHTML = "";
+
+        allLinks.forEach((item, index) => {
+            listDiv.innerHTML += `
+                <div class="link-item">
+                    <div class="link-info">
+                        <h4>${item.title}</h4>
+                        <p>${item.url}</p>
+                    </div>
+                    <div class="actions">
+                        <button class="edit-btn" onclick="startEdit(${index})">Edit</button>
+                        <button class="delete-btn" onclick="deleteLink(${index})">Delete</button>
+                    </div>
+                </div>`;
+        });
+    }
+
+    // সেভ বা এডিট হ্যান্ডেল করা
+    async function handleSave() {
+        const title = document.getElementById('tTitle').value;
+        const url = document.getElementById('tUrl').value;
+        const editIndex = parseInt(document.getElementById('editIndex').value);
+
+        if (!title || !url) return alert("সব ঘর পূরণ করুন!");
+        
+        toggleLoading(true);
+
+        if (editIndex === -1) {
+            allLinks.push({ title, url });
+        } else {
+            allLinks[editIndex] = { title, url };
         }
-    </script>
+
+        await pushToGithub();
+        resetForm();
+    }
+
+    // ডিলিট করা
+    async function deleteLink(index) {
+        if (!confirm("আপনি কি নিশ্চিতভাবে এটি ডিলিট করতে চান?")) return;
+        toggleLoading(true);
+        allLinks.splice(index, 1);
+        await pushToGithub();
+    }
+
+    // এডিট শুরু করা
+    function startEdit(index) {
+        const item = allLinks[index];
+        document.getElementById('tTitle').value = item.title;
+        document.getElementById('tUrl').value = item.url;
+        document.getElementById('editIndex').value = index;
+        document.getElementById('saveBtn').innerText = "Update Link";
+        window.scrollTo(0,0);
+    }
+
+    // GitHub-এ ডাটা পুশ করা
+    async function pushToGithub() {
+        try {
+            const res = await fetch(apiUrl, {
+                method: "PUT",
+                headers: { "Authorization": `token ${TOKEN}`, "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    message: "Dashboard update",
+                    content: btoa(unescape(encodeURIComponent(JSON.stringify(allLinks, null, 2)))),
+                    sha: fileSha
+                })
+            });
+            if (res.ok) {
+                const resJson = await res.json();
+                fileSha = resJson.content.sha;
+                renderList();
+            }
+        } catch (e) { alert("Error saving!"); }
+        toggleLoading(false);
+    }
+
+    function toggleLoading(show) {
+        document.getElementById('loading-overlay').style.display = show ? 'flex' : 'none';
+    }
+
+    function resetForm() {
+        document.getElementById('tTitle').value = "";
+        document.getElementById('tUrl').value = "";
+        document.getElementById('editIndex').value = "-1";
+        document.getElementById('saveBtn').innerText = "Save Link";
+    }
+
+    loadData();
+</script>
 </body>
 </html>
