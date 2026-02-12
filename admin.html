@@ -3,45 +3,63 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GX Admin | Secure Access</title>
+    <title>GX Admin | Pro Dashboard</title>
     <style>
-        :root { --primary: #00ff88; --bg: #050505; }
+        :root { --primary: #00ff88; --bg: #050505; --card: #111; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
-        body { background: var(--bg); color: #fff; min-height: 100vh; display: flex; justify-content: center; align-items: center; }
-        
-        /* পাসওয়ার্ড বক্স ডিজাইন */
-        #login-screen { text-align: center; background: #111; padding: 40px; border-radius: 30px; border: 1px solid #222; box-shadow: 0 20px 50px rgba(0,0,0,0.5); width: 350px; }
-        #login-screen h2 { margin-bottom: 20px; font-size: 18px; letter-spacing: 2px; }
-        .pass-input { width: 100%; padding: 15px; border-radius: 12px; border: 1px solid #333; background: #000; color: var(--primary); text-align: center; font-size: 20px; letter-spacing: 5px; margin-bottom: 20px; outline: none; }
-        .btn-auth { width: 100%; padding: 15px; background: var(--primary); border: none; border-radius: 12px; font-weight: 800; cursor: pointer; color: #000; }
+        body { background: var(--bg); color: #fff; min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px; }
 
-        /* ড্যাশবোর্ড (লগইন ছাড়া দেখা যাবে না) */
-        #admin-content { display: none; width: 100%; max-width: 500px; padding: 20px; }
-        .dashboard-header { background: #111; padding: 20px; border-radius: 20px; text-align: center; margin-bottom: 20px; border: 1px solid #222; }
-        .input-box { background: #111; padding: 25px; border-radius: 20px; border: 1px solid #222; margin-bottom: 20px; }
-        input { width: 100%; padding: 14px; margin-bottom: 10px; background: #000; border: 1px solid #333; color: #fff; border-radius: 10px; outline: none; }
-        .link-item { background: #111; padding: 15px; border-radius: 15px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #222; }
-        .delete-btn { color: #ff4444; cursor: pointer; background: none; border: none; font-weight: bold; }
+        /* Login Screen */
+        #login-screen { text-align: center; background: var(--card); padding: 40px; border-radius: 30px; border: 1px solid #222; width: 100%; max-width: 350px; }
+        .pass-input { width: 100%; padding: 15px; border-radius: 12px; border: 1px solid #333; background: #000; color: var(--primary); text-align: center; font-size: 20px; letter-spacing: 5px; margin-bottom: 20px; outline: none; }
+        
+        /* Dashboard Content */
+        #admin-content { display: none; width: 100%; max-width: 500px; animation: fadeIn 0.5s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .header { background: var(--card); padding: 20px; border-radius: 20px; text-align: center; margin-bottom: 20px; border: 1px solid #222; }
+        .input-box { background: var(--card); padding: 25px; border-radius: 20px; border: 1px solid #222; margin-bottom: 20px; }
+        
+        input { width: 100%; padding: 14px; margin-bottom: 12px; background: #000; border: 1px solid #333; color: #fff; border-radius: 10px; outline: none; }
+        input:focus { border-color: var(--primary); }
+
+        .btn-main { width: 100%; padding: 15px; background: var(--primary); border: none; border-radius: 12px; font-weight: 800; cursor: pointer; color: #000; transition: 0.3s; }
+        .btn-main:hover { background: #fff; transform: translateY(-2px); }
+
+        .link-item { background: var(--card); padding: 15px; border-radius: 15px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #222; }
+        .link-info { flex: 1; }
+        .link-info b { color: var(--primary); font-size: 15px; }
+        .link-info p { font-size: 11px; color: #666; word-break: break-all; }
+
+        .actions button { padding: 6px 12px; margin-left: 5px; border: none; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: bold; }
+        .edit-btn { background: #222; color: var(--primary); border: 1px solid var(--primary) !important; }
+        .delete-btn { background: #2b1111; color: #ff4444; }
+
+        #loading { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: none; justify-content: center; align-items: center; z-index: 1000; }
     </style>
 </head>
 <body>
 
+    <div id="loading">সংরক্ষণ করা হচ্ছে...</div>
+
     <div id="login-screen">
-        <h2>SECURE LOGIN</h2>
+        <h2 style="margin-bottom:20px; letter-spacing:2px;">GX ADMIN</h2>
         <input type="password" id="passCode" class="pass-input" placeholder="••••••••">
-        <button class="btn-auth" onclick="checkPass()">ACCESS DASHBOARD</button>
+        <button class="btn-main" onclick="checkPass()">ENTER DASHBOARD</button>
     </div>
 
     <div id="admin-content">
-        <div class="dashboard-header">
-            <h2 style="color:var(--primary)">GX ADMIN PRO</h2>
-            <p style="font-size:12px; color:#666">Manage your links securely</p>
+        <div class="header">
+            <h2 style="color:var(--primary)">DASHBOARD</h2>
+            <p id="counter" style="font-size:12px; color:#555; margin-top:5px;">Loading stats...</p>
         </div>
 
         <div class="input-box">
-            <input type="text" id="tTitle" placeholder="Title">
-            <input type="text" id="tUrl" placeholder="URL (https://...)">
-            <button class="btn-auth" onclick="save()">SAVE LINK</button>
+            <input type="hidden" id="editIndex" value="-1">
+            <input type="text" id="tTitle" placeholder="টাইটেল (যেমন: Rashid Link)">
+            <input type="text" id="tUrl" placeholder="লিংক (URL)">
+            <button class="btn-main" id="saveBtn" onclick="handleSave()">SAVE LINK</button>
+            <button id="cancelBtn" style="display:none; background:none; color:#777; border:none; width:100%; margin-top:10px; cursor:pointer;" onclick="resetForm()">Cancel Edit</button>
         </div>
 
         <div id="linkList"></div>
@@ -59,63 +77,107 @@
     let fileSha = "";
 
     function checkPass() {
-        const input = document.getElementById('passCode').value;
-        if(input === SECRET_PASS) {
+        if(document.getElementById('passCode').value === SECRET_PASS) {
             document.getElementById('login-screen').style.display = 'none';
             document.getElementById('admin-content').style.display = 'block';
+            document.body.style.alignItems = 'flex-start';
             load();
-        } else {
-            alert("ভুল পাসওয়ার্ড!");
-        }
+        } else { alert("ভুল পাসওয়ার্ড!"); }
     }
 
     async function load() {
-        const res = await fetch(apiUrl, { headers: { "Authorization": `token ${TOKEN}` } });
-        if(res.ok) {
-            const json = await res.json();
-            fileSha = json.sha;
-            allLinks = JSON.parse(atob(json.content));
-            render();
-        }
+        try {
+            const res = await fetch(apiUrl, { headers: { "Authorization": `token ${TOKEN}` } });
+            if(res.ok) {
+                const json = await res.json();
+                fileSha = json.sha;
+                allLinks = JSON.parse(atob(json.content));
+                render();
+            }
+        } catch(e) { console.error("Load error"); }
     }
 
     function render() {
         const list = document.getElementById('linkList');
+        document.getElementById('counter').innerText = `মোট লিঙ্ক: ${allLinks.length}টি`;
         list.innerHTML = "";
         allLinks.forEach((item, index) => {
             list.innerHTML += `
                 <div class="link-item">
-                    <div><b>${item.title}</b><br><small>${item.url}</small></div>
-                    <button class="delete-btn" onclick="del(${index})">DEL</button>
+                    <div class="link-info">
+                        <b>${item.title}</b>
+                        <p>${item.url}</p>
+                    </div>
+                    <div class="actions">
+                        <button class="edit-btn" onclick="startEdit(${index})">EDIT</button>
+                        <button class="delete-btn" onclick="del(${index})">DEL</button>
+                    </div>
                 </div>`;
         });
     }
 
-    async function save() {
-        const title = document.getElementById('tTitle').value;
-        const url = document.getElementById('tUrl').value;
-        if(!title || !url) return;
-        allLinks.push({title, url});
-        await push();
+    function startEdit(index) {
+        const item = allLinks[index];
+        document.getElementById('tTitle').value = item.title;
+        document.getElementById('tUrl').value = item.url;
+        document.getElementById('editIndex').value = index;
+        document.getElementById('saveBtn').innerText = "UPDATE LINK";
+        document.getElementById('cancelBtn').style.display = "block";
+        window.scrollTo({top: 0, behavior: 'smooth'});
     }
 
-    async function del(i) {
-        if(!confirm("Delete?")) return;
-        allLinks.splice(i, 1);
+    async function handleSave() {
+        const title = document.getElementById('tTitle').value;
+        const url = document.getElementById('tUrl').value;
+        const editIndex = parseInt(document.getElementById('editIndex').value);
+
+        if(!title || !url) return alert("সব ঘর পূরণ করুন!");
+        
+        document.getElementById('loading').style.display = 'flex';
+
+        if(editIndex === -1) {
+            allLinks.push({title, url});
+        } else {
+            allLinks[editIndex] = {title, url};
+        }
+
+        await push();
+        resetForm();
+    }
+
+    async function del(index) {
+        if(!confirm("আপনি কি নিশ্চিতভাবে ডিলিট করতে চান?")) return;
+        document.getElementById('loading').style.display = 'flex';
+        allLinks.splice(index, 1);
         await push();
     }
 
     async function push() {
-        await fetch(apiUrl, {
-            method: "PUT",
-            headers: { "Authorization": `token ${TOKEN}` },
-            body: JSON.stringify({
-                message: "Update",
-                content: btoa(unescape(encodeURIComponent(JSON.stringify(allLinks, null, 2)))),
-                sha: fileSha
-            })
-        });
-        location.reload();
+        try {
+            const res = await fetch(apiUrl, {
+                method: "PUT",
+                headers: { "Authorization": `token ${TOKEN}`, "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    message: "Dashboard Update",
+                    content: btoa(unescape(encodeURIComponent(JSON.stringify(allLinks, null, 2)))),
+                    sha: fileSha
+                })
+            });
+            if(res.ok) {
+                const resJson = await res.json();
+                fileSha = resJson.content.sha;
+                render();
+            }
+        } catch(e) { alert("সেভ করতে সমস্যা হয়েছে!"); }
+        document.getElementById('loading').style.display = 'none';
+    }
+
+    function resetForm() {
+        document.getElementById('tTitle').value = "";
+        document.getElementById('tUrl').value = "";
+        document.getElementById('editIndex').value = "-1";
+        document.getElementById('saveBtn').innerText = "SAVE LINK";
+        document.getElementById('cancelBtn').style.display = "none";
     }
 </script>
 </body>
