@@ -1,1 +1,226 @@
-1
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GX Admin | Pro Dashboard</title>
+    <style>
+        :root { --primary: #00ff88; --bg: #050505; --card: #111; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        body { background: var(--bg); color: #fff; min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px; }
+
+        #login-screen { text-align: center; background: var(--card); padding: 40px; border-radius: 30px; border: 1px solid #222; width: 100%; max-width: 350px; }
+        .pass-input { width: 100%; padding: 15px; border-radius: 12px; border: 1px solid #333; background: #000; color: var(--primary); text-align: center; font-size: 20px; letter-spacing: 5px; margin-bottom: 20px; outline: none; }
+        
+        #admin-content { display: none; width: 100%; max-width: 500px; animation: fadeIn 0.5s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .header { background: var(--card); padding: 20px; border-radius: 20px; text-align: center; margin-bottom: 20px; border: 1px solid #222; }
+        .input-box { background: var(--card); padding: 25px; border-radius: 20px; border: 1px solid #222; margin-bottom: 20px; }
+        
+        input { width: 100%; padding: 14px; margin-bottom: 12px; background: #000; border: 1px solid #333; color: #fff; border-radius: 10px; outline: none; }
+        input:focus { border-color: var(--primary); }
+
+        .btn-main { width: 100%; padding: 15px; background: var(--primary); border: none; border-radius: 12px; font-weight: 800; cursor: pointer; color: #000; transition: 0.3s; }
+        .btn-main:hover { background: #fff; transform: translateY(-2px); }
+
+        .link-item { background: var(--card); padding: 15px; border-radius: 15px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #222; }
+        .link-info { flex: 1; overflow: hidden; }
+        .link-info b { color: var(--primary); font-size: 15px; display: block; }
+        .link-info p { font-size: 11px; color: #666; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+        .actions { display: flex; gap: 5px; }
+        .actions button { padding: 8px 10px; border: none; border-radius: 6px; cursor: pointer; font-size: 10px; font-weight: bold; }
+        .edit-btn { background: #222; color: var(--primary); border: 1px solid var(--primary); }
+        .delete-btn { background: #2b1111; color: #ff4444; }
+
+        #loading { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: none; justify-content: center; align-items: center; z-index: 1000; color: var(--primary); font-weight: bold; flex-direction: column; gap: 10px; }
+    </style>
+</head>
+<body>
+
+    <div id="loading">লোড হচ্ছে...</div>
+
+    <div id="login-screen">
+        <h2 style="margin-bottom:20px;">GX ADMIN</h2>
+        <input type="password" id="passCode" class="pass-input" placeholder="পাসওয়ার্ড">
+        <button class="btn-main" onclick="checkPass()">LOGIN</button>
+    </div>
+
+    <div id="admin-content">
+        <div class="header">
+            <h2 style="color:var(--primary)">DASHBOARD</h2>
+            <p id="counter">লিঙ্ক লোড হচ্ছে...</p>
+        </div>
+
+        <div class="input-box">
+            <input type="hidden" id="editIndex" value="-1">
+            <input type="text" id="tTitle" placeholder="টাইটেল (বাংলা/English)">
+            <input type="text" id="tUrl" placeholder="লিঙ্ক (URL)">
+            <button class="btn-main" id="saveBtn" onclick="handleSave()">SAVE LINK</button>
+            <button id="cancelBtn" style="display:none; color:#777; border:none; width:100%; margin-top:10px; cursor:pointer; background:none;" onclick="resetForm()">বাতিল করুন</button>
+        </div>
+
+        <div id="linkList"></div>
+    </div>
+
+<script>
+    // আপনার দেওয়া বর্তমান টোকেনটি এখানে বসানো হয়েছে
+    const G_TOKEN = "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"; 
+    const G_USER = "guui68";
+    const G_REPO = "Photo-to-text";
+    const G_FILE = "links.json";
+    const SECRET_PASS = "78482302";
+
+    const apiUrl = `https://api.github.com/repos/${G_USER}/${G_REPO}/contents/${G_FILE}`;
+    let allLinks = [];
+    let fileSha = "";
+
+    function checkPass() {
+        const pass = document.getElementById('passCode').value;
+        if(pass === SECRET_PASS) {
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('admin-content').style.display = 'block';
+            loadData();
+        } else {
+            alert("ভুল পাসওয়ার্ড!");
+        }
+    }
+
+    async function loadData() {
+        showLoading(true);
+        try {
+            const res = await fetch(apiUrl, {
+                headers: { "Authorization": `token ${G_TOKEN}`, "Accept": "application/vnd.github.v3+json" }
+            });
+            if(res.ok) {
+                const data = await res.json();
+                fileSha = data.sha;
+                // বাংলার জন্য সঠিক ডিকোডিং
+                const content = decodeURIComponent(escape(atob(data.content)));
+                allLinks = JSON.parse(content);
+                renderLinks();
+            } else {
+                const err = await res.json();
+                alert("এরর: " + err.message + "\nটোকেনটি সম্ভবত ব্লক হয়ে গেছে।");
+            }
+        } catch (error) {
+            console.error(error);
+        }
+        showLoading(false);
+    }
+
+    function renderLinks() {
+        const list = document.getElementById('linkList');
+        document.getElementById('counter').innerText = `মোট লিঙ্ক: ${allLinks.length}টি`;
+        list.innerHTML = "";
+        allLinks.forEach((item, index) => {
+            list.innerHTML += `
+                <div class="link-item">
+                    <div class="link-info">
+                        <b>${item.title}</b>
+                        <p>${item.url}</p>
+                    </div>
+                    <div class="actions">
+                        <button class="edit-btn" onclick="startEdit(${index})">এডিট</button>
+                        <button class="delete-btn" onclick="deleteLink(${index})">ডিলিট</button>
+                    </div>
+                </div>`;
+        });
+    }
+
+    async function handleSave() {
+        const title = document.getElementById('tTitle').value.trim();
+        const url = document.getElementById('tUrl').value.trim();
+        const editIndex = parseInt(document.getElementById('editIndex').value);
+
+        if(!title || !url) return alert("সবগুলো ঘর পূরণ করুন!");
+
+        showLoading(true);
+        let updatedData = [...allLinks];
+
+        if(editIndex === -1) {
+            updatedData.push({ title, url });
+        } else {
+            updatedData[editIndex] = { title, url };
+        }
+
+        const success = await pushToGithub(updatedData);
+        if(success) {
+            allLinks = updatedData;
+            renderLinks();
+            resetForm();
+        }
+        showLoading(false);
+    }
+
+    async function deleteLink(index) {
+        if(!confirm("ডিলিট করতে চান?")) return;
+        showLoading(true);
+        let updatedData = [...allLinks];
+        updatedData.splice(index, 1);
+        
+        const success = await pushToGithub(updatedData);
+        if(success) {
+            allLinks = updatedData;
+            renderLinks();
+        }
+        showLoading(false);
+    }
+
+    async function pushToGithub(data) {
+        try {
+            const jsonStr = JSON.stringify(data, null, 2);
+            const encodedContent = btoa(unescape(encodeURIComponent(jsonStr)));
+
+            const res = await fetch(apiUrl, {
+                method: "PUT",
+                headers: {
+                    "Authorization": `token ${G_TOKEN}`,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    message: "Update via Admin Panel",
+                    content: encodedContent,
+                    sha: fileSha
+                })
+            });
+
+            if(res.ok) {
+                const resJson = await res.json();
+                fileSha = resJson.content.sha;
+                return true;
+            } else {
+                const errData = await res.json();
+                alert("GitHub error: " + errData.message);
+                return false;
+            }
+        } catch (e) {
+            alert("কানেকশন এরর!");
+            return false;
+        }
+    }
+
+    function startEdit(index) {
+        const item = allLinks[index];
+        document.getElementById('tTitle').value = item.title;
+        document.getElementById('tUrl').value = item.url;
+        document.getElementById('editIndex').value = index;
+        document.getElementById('saveBtn').innerText = "UPDATE LINK";
+        document.getElementById('cancelBtn').style.display = "block";
+    }
+
+    function resetForm() {
+        document.getElementById('tTitle').value = "";
+        document.getElementById('tUrl').value = "";
+        document.getElementById('editIndex').value = "-1";
+        document.getElementById('saveBtn').innerText = "SAVE LINK";
+        document.getElementById('cancelBtn').style.display = "none";
+    }
+
+    function showLoading(status) {
+        document.getElementById('loading').style.display = status ? 'flex' : 'none';
+    }
+</script>
+</body>
+</html>
